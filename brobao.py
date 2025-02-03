@@ -42,21 +42,21 @@ def main():
     print(line)
     while True:
         line = ser.readline() # readline is not very nice, think about using read_all() or just read() instead.
-        index = line.find(b">: ")  # 找到 `>:` 的位置
-        if index != -1:  # 確保 `>:` 存在
-            index0 = line.find(b"<0x")
-            print(line[index0:index+1])
-            result = line[index + 3:-4].strip()  # 擷取 `>:` 後面的字串
-            bytestr = result.decode("iso8859-1")
-            print(handle_modbus_type("temperature", bytes.fromhex(bytestr))) # Temperature signal processing. Value1: 120.0, Value2: 144.0
-            print(handle_modbus_type("humidity", bytes.fromhex(bytestr))) # Temperature signal processing. Value1: 120.0, Value2: 144.0
-            print(handle_modbus_type("noise", bytes.fromhex(bytestr))) # Temperature signal processing. Value1: 120.0, Value2: 144.0
-        cmd = f"mesh test net-send 82030{onoff:d}{count:02d}\n"
-        print(cmd)
-        ser.write(cmd.encode('iso8859-1'))
-        onoff = (onoff + 1) % 2
-        count = (count + 1) % 100
-        time.sleep(1.5)
-
+        if(line):
+            index = line.find(b">: ")  # 找到 `>:` 的位置
+            if index != -1:  # 確保 `>:` 存在
+                index0 = line.find(b"<0x")
+                print(line[index0:index+1])
+                result = line[index + 3:-4].strip()  # 擷取 `>:` 後面的字串
+                bytestr = result.decode("iso8859-1")
+                print(handle_modbus_type("temperature", bytes.fromhex(bytestr))) # Temperature signal processing. Value1: 120.0, Value2: 144.0
+                print(handle_modbus_type("humidity", bytes.fromhex(bytestr))) # Temperature signal processing. Value1: 120.0, Value2: 144.0
+                print(handle_modbus_type("noise", bytes.fromhex(bytestr))) # Temperature signal processing. Value1: 120.0, Value2: 144.0
+                cmd = f"mesh test net-send 82030{onoff:d}{count:02d}\n"
+                print(cmd)
+                ser.write(cmd.encode('iso8859-1'))
+                onoff = (onoff + 1) % 2
+                count = (count + 1) % 100
+            
 if __name__ == "__main__":
     main()
